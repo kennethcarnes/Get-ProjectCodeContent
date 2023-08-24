@@ -45,7 +45,3 @@ To bypass the interactive prompts and directly provide the parameters:
 ```powershell
 .\path_to_your_script.ps1 -RootDirectory "C:\code\azure-swa" -TargetDirectories @("infra", ".github")
 ```
-
-## Acknowledgements
-
-Thanks to OpenAI's GPT-4 for assistance in creating this utility.
