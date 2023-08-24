@@ -1,7 +1,4 @@
 # Get-CodeContent PowerShell Script
-
-This function outputs the directory structure of a specified root directory and the content of files within specified target directories relative to the root. The results are copied to the clipboard for easy sharing.
-
 ## Description
 
 The `Get-CodeContent` function captures the entire directory structure of a given root directory and also extracts the content of files within specified target directories. The results are conveniently copied to the clipboard for easy sharing.
