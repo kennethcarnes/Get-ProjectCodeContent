@@ -1,6 +1,6 @@
 # Get-CodeContent PowerShell Script
 
-A utility to retrieve and display directory structures and file contents from specified directories.
+This function outputs the directory structure of a specified root directory and the content of files within specified target directories relative to the root. The results are copied to the clipboard for easy sharing.
 
 ## Description
 
