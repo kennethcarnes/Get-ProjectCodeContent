@@ -43,5 +43,5 @@ The `Get-CodeContent` function captures the entire directory structure of a give
 To bypass the interactive prompts and directly provide the parameters:
 
 ```powershell
-.\path_to_your_script.ps1 -RootDirectory "C:\code\azure-swa" -TargetDirectories @("infra", ".github")
+.\path_to_your_script.ps1 -RootDirectory "C:\path\to\root" -TargetDirectories @("folder1", "folder2") -SaveToFile -OutputFile "my_output.txt"
 ```
