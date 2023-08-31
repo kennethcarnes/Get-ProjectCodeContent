@@ -8,6 +8,8 @@ The `Get-CodeContent` function captures the entire directory structure of a give
 - Outputs the entire directory structure of the provided root directory.
 - Displays content of files within specified target directories relative to the root.
 - Copies the result to the clipboard for easy sharing and pasting.
+- Provides useful error messages for easier troubleshooting when reading file contents.
+
 
 ## Installation
 

@@ -80,12 +80,19 @@ function Get-FileContents {
         $files = Get-ChildItem -Path $fullDirPath -Recurse -File
 
         foreach ($file in $files) {
-            $relativePath = $file.FullName.Replace($RootPath, '').TrimStart('\')
-            $contentArray += ""
-            $contentArray += "--- Contents of $relativePath ---"
-            $contentArray += (Get-Content $file.FullName | ForEach-Object { "    $_" })
-            $contentArray += "--- End of $relativePath ---"
+            try {
+                $relativePath = $file.FullName.Replace($RootPath, '').TrimStart('\')
+                $contentArray += ""
+                $contentArray += "--- Contents of $relativePath ---"
+                $contentArray += (Get-Content $file.FullName | ForEach-Object { "    $_" })
+                $contentArray += "--- End of $relativePath ---"
+            }
+            catch {
+                Write-Error "Could not read the contents of $file. Error: $_"
+                continue
+            }
         }
+        
     }
 
     return $contentArray
