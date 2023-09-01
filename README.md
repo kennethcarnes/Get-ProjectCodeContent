@@ -7,9 +7,9 @@ The `Get-CodeContent` function captures the entire directory structure of a give
 
 - Outputs the entire directory structure of the provided root directory.
 - Displays content of files within specified target directories relative to the root.
-- Copies the result to the clipboard for easy sharing and pasting.
+- Copies the result to the clipboard for easy pasting and sharing.
 - Provides useful error messages for easier troubleshooting when reading file contents.
-
+- Requires the user to specify at least one target directory.
 
 ## Installation
 
@@ -37,6 +37,8 @@ The `Get-CodeContent` function captures the entire directory structure of a give
 2. Follow the on-screen prompts:
    - Enter the root directory path (e.g., `C:\code\azure-swa`).
    - Enter target directories relative to the root (e.g., `infra,.github`).
+   - You must specify at least one target directory for the script to proceed. Leaving this blank will result in an error message.
+   - If your target directories have spaces or special characters, enclose each directory name in quotes: `"folder one","folder two"`
 
 3. The script will then copy the directory structure and code content to your clipboard. You can paste it anywhere you need!
 
