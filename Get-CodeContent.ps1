@@ -32,7 +32,7 @@ function Get-CodeContent {
         $outputArray += $treeOutput
 
         if ($AllDirectories) {
-            $allDirs = Get-ChildItem -Path $RootDirectory -Recurse -Directory | ForEach-Object { $_.FullName.Replace($RootDirectory, '').TrimStart('\') }
+            $allDirs = Get-ChildItem -Path $RootDirectory -Recurse -Directory | ForEach-Object { $_.Name }
             $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $allDirs
             $fileContents += Get-FileContents -RootPath $RootDirectory -Directories ""
         } else {
@@ -63,11 +63,6 @@ function Get-FileContents {
 
     foreach ($dir in $Directories) {
         $fullDirPath = Join-Path $RootPath $dir.Trim()
-        
-        if (-not (Test-Path $fullDirPath)) {
-            Write-Error "The directory ($dir) does not exist within the root directory."
-            continue
-        }
 
         $files = Get-ChildItem -Path $fullDirPath -Recurse -File
 
