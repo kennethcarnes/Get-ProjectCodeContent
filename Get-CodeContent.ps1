@@ -18,7 +18,7 @@ function Get-CodeContent {
     if (-not $AllDirectories -and ($null -eq $TargetDirectories -or $TargetDirectories.Length -eq 0)) {
         Write-Error "You must specify at least one target directory or use -AllDirectories switch. Separate multiple directories with commas."
         return
-    }         
+    }
 
     try {
         if (-not (Test-Path $RootDirectory)) {
@@ -33,10 +33,10 @@ function Get-CodeContent {
 
         if ($AllDirectories) {
             $allDirs = Get-ChildItem -Path $RootDirectory -Recurse -Directory | ForEach-Object { $_.Name }
-            $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $allDirs
-            $fileContents += Get-FileContents -RootPath $RootDirectory -Directories ""
+            $fileContents = Get-FileContent -RootPath $RootDirectory -Directories $allDirs
+            $fileContents += Get-FileContent -RootPath $RootDirectory -Directories ""
         } else {
-            $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $TargetDirectories
+            $fileContents = Get-FileContent -RootPath $RootDirectory -Directories $TargetDirectories
         }
 
         $outputArray += $fileContents
@@ -53,7 +53,7 @@ function Get-CodeContent {
     }
 }
 
-function Get-FileContents {
+function Get-FileContent {
     param (
         [string]$RootPath,
         [string[]]$Directories
@@ -78,7 +78,7 @@ function Get-FileContents {
                 Write-Error "Could not read the contents of $file. Error: $_"
                 continue
             }
-        } 
+        }
     }
 
     return $contentArray
