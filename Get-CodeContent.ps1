@@ -7,9 +7,10 @@ function Get-CodeContent {
         [switch]$AllDirectories = $false
     )
 
-    if ($null -eq $RootDirectory) {
+    if ([string]::IsNullOrEmpty($RootDirectory)) {
         $RootDirectory = Read-Host "Please enter the root directory path"
     }
+
     if (-not $AllDirectories -and ($null -eq $TargetDirectories)) {
         $TargetDirectories = (Read-Host "Please enter target directories separated by commas") -split ',' -ne ''
     }
@@ -17,7 +18,7 @@ function Get-CodeContent {
     if (-not $AllDirectories -and ($null -eq $TargetDirectories -or $TargetDirectories.Length -eq 0)) {
         Write-Error "You must specify at least one target directory or use -AllDirectories switch. Separate multiple directories with commas."
         return
-    }      
+    }         
 
     try {
         if (-not (Test-Path $RootDirectory)) {
@@ -33,7 +34,6 @@ function Get-CodeContent {
         if ($AllDirectories) {
             $allDirs = Get-ChildItem -Path $RootDirectory -Recurse -Directory | ForEach-Object { $_.FullName.Replace($RootDirectory, '').TrimStart('\') }
             $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $allDirs
-            # Add this line to include the root directory itself when using AllDirectories switch
             $fileContents += Get-FileContents -RootPath $RootDirectory -Directories ""
         } else {
             $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $TargetDirectories
