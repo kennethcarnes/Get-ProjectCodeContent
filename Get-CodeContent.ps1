@@ -24,17 +24,26 @@
 #>
 function Get-CodeContent {
     param (
-        [string]$RootDirectory = (Read-Host "Please enter the root directory path"),
-        [string[]]$TargetDirectories = ((Read-Host "Please enter target directories separated by commas") -split ',' -ne ''),
+        [string]$RootDirectory = $null,
+        [string[]]$TargetDirectories = $null,
         [switch]$SaveToFile = $false,
-        [string]$OutputFile = "output.txt"
+        [string]$OutputFile = "output.txt",
+        [switch]$AllDirectories = $false
     )
 
-    # Ensure TargetDirectories is not empty
-    if ($null -eq $TargetDirectories -or $TargetDirectories.Length -eq 0) {
-        Write-Error "You must specify at least one target directory. Separate multiple directories with commas."
-        return
+    # Prompt for missing parameters
+    if ($null -eq $RootDirectory) {
+        $RootDirectory = Read-Host "Please enter the root directory path"
     }
+    if (-not $AllDirectories -and ($null -eq $TargetDirectories)) {
+        $TargetDirectories = (Read-Host "Please enter target directories separated by commas") -split ',' -ne ''
+    }
+
+    # Ensure TargetDirectories is not empty unless -AllDirectories is used
+    if (-not $AllDirectories -and ($null -eq $TargetDirectories -or $TargetDirectories.Length -eq 0)) {
+        Write-Error "You must specify at least one target directory or use -AllDirectories switch. Separate multiple directories with commas."
+        return
+    }      
 
     try {
         # Validate Root Directory
@@ -44,14 +53,20 @@ function Get-CodeContent {
         }
 
         $outputArray = @()
-
+        
         # Replace generic tree output header with something cleaner
         $outputArray += "File and Folder Structure"
         $treeOutput = & tree /f $RootDirectory 2>&1 | Select-Object -Skip 2
         $outputArray += $treeOutput
 
         # Fetch file contents
-        $fileContents = Get-FileContents $RootDirectory $TargetDirectories
+        if ($AllDirectories) {
+            $allDirs = Get-ChildItem -Path $RootDirectory -Recurse -Directory | ForEach-Object { $_.FullName.Replace($RootDirectory, '').TrimStart('\') }
+            $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $allDirs
+        } else {
+            $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $TargetDirectories
+        }
+
         $outputArray += $fileContents
 
         # Output

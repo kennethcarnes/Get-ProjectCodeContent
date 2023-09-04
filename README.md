@@ -49,3 +49,12 @@ To bypass the interactive prompts and directly provide the parameters:
 ```powershell
 .\path_to_your_script.ps1 -RootDirectory "C:\path\to\root" -TargetDirectories @("folder1", "folder2") -SaveToFile -OutputFile "my_output.txt"
 ```
+
+### `-AllDirectories` Switch
+When the `-AllDirectories` switch is used, the script will ignore the `TargetDirectories` parameter and automatically include all directories under the `RootDirectory` for content extraction.
+
+
+To use the `-AllDirectories` switch:
+```powershell
+.\path_to_your_script.ps1 -RootDirectory "C:\path\to\root" -AllDirectories -SaveToFile -OutputFile "my_output.txt"
+```
