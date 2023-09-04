@@ -1,27 +1,3 @@
-<#
-.SYNOPSIS
-    Retrieves and displays the directory structure and contents of specified files.
-
-.DESCRIPTION
-    This function outputs the directory structure of a specified root directory and
-    the content of files within specified target directories relative to the root.
-    The results are copied to the clipboard for easy sharing or saved to a file.
-
-.PARAMETER RootDirectory
-    The path to the root directory.
-
-.PARAMETER TargetDirectories
-    A list of directories relative to the root whose file contents will be displayed.
-
-.PARAMETER SaveToFile
-    Switch to indicate whether to save output to a file instead of copying to clipboard.
-
-.PARAMETER OutputFile
-    The file where the output should be saved. Only used if SaveToFile is specified.
-
-.EXAMPLE
-    Get-CodeContent -RootDirectory "C:\code\azure-swa" -TargetDirectories @("infra", ".github")
-#>
 function Get-CodeContent {
     param (
         [string]$RootDirectory = $null,
@@ -31,7 +7,6 @@ function Get-CodeContent {
         [switch]$AllDirectories = $false
     )
 
-    # Prompt for missing parameters
     if ($null -eq $RootDirectory) {
         $RootDirectory = Read-Host "Please enter the root directory path"
     }
@@ -39,37 +14,33 @@ function Get-CodeContent {
         $TargetDirectories = (Read-Host "Please enter target directories separated by commas") -split ',' -ne ''
     }
 
-    # Ensure TargetDirectories is not empty unless -AllDirectories is used
     if (-not $AllDirectories -and ($null -eq $TargetDirectories -or $TargetDirectories.Length -eq 0)) {
         Write-Error "You must specify at least one target directory or use -AllDirectories switch. Separate multiple directories with commas."
         return
     }      
 
     try {
-        # Validate Root Directory
         if (-not (Test-Path $RootDirectory)) {
             Write-Error "The specified root directory ($RootDirectory) does not exist. Please ensure the path is correct."
             return
         }
 
         $outputArray = @()
-        
-        # Replace generic tree output header with something cleaner
         $outputArray += "File and Folder Structure"
         $treeOutput = & tree /f $RootDirectory 2>&1 | Select-Object -Skip 2
         $outputArray += $treeOutput
 
-        # Fetch file contents
         if ($AllDirectories) {
             $allDirs = Get-ChildItem -Path $RootDirectory -Recurse -Directory | ForEach-Object { $_.FullName.Replace($RootDirectory, '').TrimStart('\') }
             $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $allDirs
+            # Add this line to include the root directory itself when using AllDirectories switch
+            $fileContents += Get-FileContents -RootPath $RootDirectory -Directories ""
         } else {
             $fileContents = Get-FileContents -RootPath $RootDirectory -Directories $TargetDirectories
         }
 
         $outputArray += $fileContents
 
-        # Output
         if ($SaveToFile) {
             Set-Content -Path $OutputFile -Value ($outputArray -join "`r`n")
             Write-Output "Directory structure and code contents saved to $OutputFile"
@@ -92,7 +63,7 @@ function Get-FileContents {
 
     foreach ($dir in $Directories) {
         $fullDirPath = Join-Path $RootPath $dir.Trim()
-
+        
         if (-not (Test-Path $fullDirPath)) {
             Write-Error "The directory ($dir) does not exist within the root directory."
             continue
@@ -112,8 +83,7 @@ function Get-FileContents {
                 Write-Error "Could not read the contents of $file. Error: $_"
                 continue
             }
-        }
-        
+        } 
     }
 
     return $contentArray
