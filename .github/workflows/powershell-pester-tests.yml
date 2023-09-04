@@ -1,0 +1,42 @@
+name: PowerShell Pester Tests and Script Analyzer
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-with-PSScriptAnalyzer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install PSScriptAnalyzer module
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Lint with PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -Outvariable issues
+          $errors = $issues.Where({$_.Severity -eq 'Error'})
+          if ($errors.Count -gt 0) {
+            throw "There were $($errors.Count) errors."
+          }
+
+  pester-test:
+    needs: lint-with-PSScriptAnalyzer
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Create Test Directories
+        run: |
+          New-Item -ItemType Directory -Path "C:\Test-RootDirectory"
+
+      - name: Run Pester Tests
+        shell: pwsh
+        run: Invoke-Pester ./Get-CodeContent.Tests.ps1 -Output Detailed -CI -Throw
