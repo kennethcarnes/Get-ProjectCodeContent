@@ -28,11 +28,6 @@ You can specify parameters directly:
 .\Get-CodeContent.ps1 -RootDirectory "C:\path\to\root" -TargetDirectories @("subfolder1", "subfolder2")
 ```
 
-Use -AllDirectories to include root and all subdirectories:
-```powershell
-.\Get-CodeContent.ps1 -RootDirectory "C:\path\to\root" -AllDirectories
-```
-
 By default, the script copies the output to the clipboard. If you'd like to save the results to a file instead:
 ```powershell
 .\Get-CodeContent.ps1 -RootDirectory "C:\path\to\root" -SaveToFile
