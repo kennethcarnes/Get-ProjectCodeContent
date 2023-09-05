@@ -41,5 +41,5 @@ jobs:
       - name: Run Pester Tests
         shell: pwsh
         run: |
-          Invoke-Pester ./Get-CodeContent.Tests.ps1 -Passthru
+          Invoke-Pester ./Get-CodeContent.Tests.ps1
           
