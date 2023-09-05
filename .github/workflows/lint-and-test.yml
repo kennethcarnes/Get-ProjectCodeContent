@@ -41,5 +41,6 @@ jobs:
       - name: Run Pester Tests
         shell: pwsh
         run: |
+          Install-Module -Name Pester -Force -SkipPublisherCheck
           Invoke-Pester ./Get-CodeContent.Tests.ps1
           
