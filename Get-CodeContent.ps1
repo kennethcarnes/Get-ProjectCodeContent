@@ -8,8 +8,7 @@ function Get-CodeContent {
 
     # Check if the RootDirectory exists
     if (-not (Test-Path $RootDirectory)) {
-        Write-Error "The specified root directory ($RootDirectory) does not exist. Please ensure the path is correct."
-        return
+        throw "The specified root directory ($RootDirectory) does not exist. Please ensure the path is correct."
     }
 
     try {
