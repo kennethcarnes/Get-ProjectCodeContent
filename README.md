@@ -1,60 +1,56 @@
 # Get-CodeContent PowerShell Script
-## Description
+[![Lint and Test](https://github.com/kennethcarnes/Get-CodeContent/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/kennethcarnes/Get-CodeContent/actions/workflows/lint-and-test.yml)
 
-The `Get-CodeContent` function captures the entire directory structure of a given root directory and also extracts the content of files within specified target directories. The results are conveniently copied to the clipboard for easy sharing.
+`Get-CodeContent` is a PowerShell script that captures a code project's directory structure and file contents, then copies it to the clipboard. Ideal for sharing code projects with ChatGPT.
 
 ## Features
+- Captures full directory structure
+- Extracts content of specified directories
+- Clipboard or file output
+- Error handling and user prompts
 
-- Outputs the entire directory structure of the provided root directory.
-- Displays content of files within specified target directories relative to the root.
-- Copies the result to the clipboard for easy pasting and sharing.
-- Provides useful error messages for easier troubleshooting when reading file contents.
-- Requires the user to specify at least one target directory.
+## Quick Start
 
-## Installation
+1. Clone the repo
+    ```powershell
+    git clone https://github.com/kennethcarnes/Get-CodeContent
+    ```
+2. Navigate to the script directory in PowerShell
 
-1. Clone this repository or download the PowerShell script.
-   ```powershell
-   git clone https://github.com/kennethcarnes/Get-CodeContent
-   ```
+3. Run the script and follow the prompts
+    ```powershell
+    .\Get-CodeContent.ps1
+    ```
+### Parameter Usage
 
-2. Open PowerShell in the directory containing the script.
-
-3. If needed, modify execution policy to allow the script to run:
-   ```powershell
-   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-   ```
-
-## Usage
-
-### Interactive
-
-1. Execute the PowerShell script:
-   ```bash
-   .\path_to_your_script.ps1
-   ```
-
-2. Follow the on-screen prompts:
-   - Enter the root directory path (e.g., `C:\code\azure-swa`).
-   - Enter target directories relative to the root (e.g., `infra,.github`).
-   - You must specify at least one target directory for the script to proceed. Leaving this blank will result in an error message.
-   - If your target directories have spaces or special characters, enclose each directory name in quotes: `"folder one","folder two"`
-
-3. The script will then copy the directory structure and code content to your clipboard. You can paste it anywhere you need!
-
-### With Parameters
-
-To bypass the interactive prompts and directly provide the parameters:
-
+You can specify parameters directly:
 ```powershell
-.\path_to_your_script.ps1 -RootDirectory "C:\path\to\root" -TargetDirectories @("folder1", "folder2")
+.\Get-CodeContent.ps1 -RootDirectory "C:\path\to\root" -TargetDirectories @("subfolder1", "subfolder2")
 ```
 
-### `-AllDirectories` Switch
-When the `-AllDirectories` switch is used, the script will ignore the `TargetDirectories` parameter and automatically include all directories under the `RootDirectory` for content extraction.
-
-
-To use the `-AllDirectories` switch:
+Use -AllDirectories to include root and all subdirectories:
 ```powershell
-.\path_to_your_script.ps1 -RootDirectory "C:\path\to\root" -AllDirectories
+.\Get-CodeContent.ps1 -RootDirectory "C:\path\to\root" -AllDirectories
 ```
+
+By default, the script copies the output to the clipboard. If you'd like to save the results to a file instead:
+```powershell
+.\Get-CodeContent.ps1 -RootDirectory "C:\path\to\root" -SaveToFile
+```
+Specify a custom output file with -OutputFile:
+```powershell
+.\Get-CodeContent.ps1 -RootDirectory "C:\path\to\root" -SaveToFile -OutputFile "desired_filename.txt"
+```
+## Project Overview
+### Continuous Integration and Continuous Deployment (CI/CD)
+
+Utilizing GitHub Actions, the project has a CI/CD pipeline defined in `lint-and-test.yml`. When a new version of the script is pushed to the `main` branch, automated linting and unit tests ensure the script maintains high standard of quality and functionality.
+#### Linting with PSScriptAnalyzer
+
+PSScriptAnalyzer, a static code checker for PowerShell modules and scripts will automatically scan and flag code quality issues.
+
+#### Unit Testing with Pester
+Pester, a PowerShell testing framework, validates the core functionality of the script through the `Get-CodeContent.Tests.ps1` test script.
+
+
+
