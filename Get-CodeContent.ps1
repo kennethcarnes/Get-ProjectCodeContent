@@ -1,40 +1,28 @@
 function Get-CodeContent {
     param (
-        [string]$RootDirectory = $null,
-        [string[]]$TargetDirectories = $null,
+        [string]$RootDirectory = $(throw "RootDirectory is a required parameter"),
+        [string[]]$TargetDirectories = @(),
         [switch]$SaveToFile = $false,
-        [string]$OutputFile = "output.txt",
-        [switch]$AllDirectories = $false
+        [string]$OutputFile = "output.txt"
     )
 
-    if ([string]::IsNullOrEmpty($RootDirectory)) {
-        $RootDirectory = Read-Host "Please enter the root directory path"
-    }
-
-    if (-not $AllDirectories -and ($null -eq $TargetDirectories)) {
-        $TargetDirectories = (Read-Host "Please enter target directories separated by commas") -split ',' -ne ''
-    }
-
-    if (-not $AllDirectories -and ($null -eq $TargetDirectories -or $TargetDirectories.Length -eq 0)) {
-        Write-Error "You must specify at least one target directory or use -AllDirectories switch. Separate multiple directories with commas."
+    # Check if the RootDirectory exists
+    if (-not (Test-Path $RootDirectory)) {
+        Write-Error "The specified root directory ($RootDirectory) does not exist. Please ensure the path is correct."
         return
     }
 
     try {
-        if (-not (Test-Path $RootDirectory)) {
-            Write-Error "The specified root directory ($RootDirectory) does not exist. Please ensure the path is correct."
-            return
-        }
-
         $outputArray = @()
         $outputArray += "File and Folder Structure"
         $treeOutput = & tree /f $RootDirectory 2>&1 | Select-Object -Skip 2
         $outputArray += $treeOutput
 
-        if ($AllDirectories) {
+        # If no TargetDirectories specified, default to all including the root
+        if ($TargetDirectories.Length -eq 0) {
             $allDirs = Get-ChildItem -Path $RootDirectory -Recurse -Directory | ForEach-Object { $_.Name }
             $fileContents = Get-FileContent -RootPath $RootDirectory -Directories $allDirs
-            $fileContents += Get-FileContent -RootPath $RootDirectory -Directories ""
+            $fileContents += Get-FileContent -RootPath $RootDirectory -Directories "."
         } else {
             $fileContents = Get-FileContent -RootPath $RootDirectory -Directories $TargetDirectories
         }
@@ -83,6 +71,3 @@ function Get-FileContent {
 
     return $contentArray
 }
-
-# Call the main function
-Get-CodeContent
