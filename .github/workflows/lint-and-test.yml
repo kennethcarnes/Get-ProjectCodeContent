@@ -15,7 +15,8 @@ jobs:
       - name: Install PSScriptAnalyzer module
         shell: pwsh
         run: |
-          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -SkipPublisherCheck
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -ErrorAction Stop
 
       - name: Lint with PSScriptAnalyzer
         shell: pwsh
@@ -39,4 +40,8 @@ jobs:
 
       - name: Run Pester Tests
         shell: pwsh
-        run: Invoke-Pester ./Get-CodeContent.Tests.ps1 -Output Detailed -CI -Throw
+        run: |
+          Set-PSRepository psgallery -InstallationPolicy Trusted
+          Install-Module -Name Pester -ErrorAction Stop
+          Invoke-Pester ./Get-CodeContent.Tests.ps1 -Output Detailed -CI -Throw
+          
