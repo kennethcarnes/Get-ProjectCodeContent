@@ -1,46 +1,86 @@
+# Name of the GitHub Actions workflow
 name: Lint and Test
 
+# Trigger the workflow on push to the 'main' branch
 on:
   push:
     branches:
       - main
 
+# Define jobs to run
 jobs:
+  # First job for linting with PSScriptAnalyzer
   lint-with-PSScriptAnalyzer:
+    # Specify the runner environment
     runs-on: windows-latest
     steps:
+      # Checkout the repository code
       - name: Check out repository code
         uses: actions/checkout@v3
 
+      # Cache PowerShell Modules to speed up the workflow
+      - name: Cache PowerShell Modules
+        id: cacher
+        uses: actions/cache@v3
+        with:
+          # Cache location for PowerShell modules
+          path: C:\Program Files\WindowsPowerShell\Modules
+          # Cache key to uniquely identify the cache
+          key: ${{ runner.os }}-PSScriptAnalyzer
+
+      # Install PSScriptAnalyzer module if cache miss
       - name: Install PSScriptAnalyzer module
+        if: steps.cacher.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
+          # Set PSGallery as a trusted repository
           Set-PSRepository PSGallery -InstallationPolicy Trusted
-          Install-Module PSScriptAnalyzer -ErrorAction Stop
+          # Install specific version of PSScriptAnalyzer
+          Install-Module PSScriptAnalyzer -RequiredVersion '1.20.0' -ErrorAction Stop
 
+      # Lint the PowerShell scripts with PSScriptAnalyzer
       - name: Lint with PSScriptAnalyzer
         shell: pwsh
         run: |
+          # Invoke the linter
           Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -Outvariable issues
+          # Filter out errors from the linter output
           $errors = $issues.Where({$_.Severity -eq 'Error'})
+          # Throw an error if there are linting errors
           if ($errors.Count -gt 0) {
             throw "There were $($errors.Count) errors."
           }
 
+  # Second job for running Pester unit tests
   pester-unit-tests:
+    # Make this job depend on the success of the linting job
     needs: lint-with-PSScriptAnalyzer
+    # Specify the runner environment
     runs-on: windows-latest
     steps:
+      # Checkout the repository code
       - name: Check out repository code
         uses: actions/checkout@v3
 
+      # Create directories required for testing
       - name: Create Test Directories
         run: |
           New-Item -ItemType Directory -Path "C:\Test-RootDirectory"
 
+      # Run the Pester unit tests
       - name: Run Pester Tests
         shell: pwsh
         run: |
-          Install-Module -Name Pester -Force -SkipPublisherCheck
+          # Install specific version of Pester
+          Install-Module -Name Pester -RequiredVersion '5.3.1' -Force -SkipPublisherCheck
+          # Invoke Pester tests
           Invoke-Pester ./Get-CodeContent.Tests.ps1
-          
+
+      # Upload test results as artifacts
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          # Name of the artifact
+          name: windows-Unit-Tests
+          # Path to the test results to upload
+          path: .\TestResults.xml
