@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install PSScriptAnalyzer module
         shell: pwsh
@@ -32,7 +32,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Create Test Directories
         run: |
@@ -41,7 +41,5 @@ jobs:
       - name: Run Pester Tests
         shell: pwsh
         run: |
-          Set-PSRepository psgallery -InstallationPolicy Trusted
-          Install-Module -Name Pester -ErrorAction Stop
-          Invoke-Pester ./Get-CodeContent.Tests.ps1 -Output Detailed -CI -Throw
+          Invoke-Pester ./Get-CodeContent.Tests.ps1 -Passthru
           
