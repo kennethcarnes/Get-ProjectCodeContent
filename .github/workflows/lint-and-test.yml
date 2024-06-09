@@ -35,7 +35,8 @@ jobs:
           $errors = $issues.Where({$_.Severity -eq 'Error'})
           if ($errors.Count -gt 0) {
             throw "There were $($errors.Count) errors."
-
+          }
+          
   pester-unit-tests:
     needs: lint-with-PSScriptAnalyzer
     runs-on: windows-latest
