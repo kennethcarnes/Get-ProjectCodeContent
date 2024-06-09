@@ -1,5 +1,7 @@
 # Get-ProjectCodeContent PowerShell Script
 
+[![Lint and Test](https://github.com/kennethcarnes/Get-ProjectCodeContent/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/kennethcarnes/Get-ProjectCodeContent/actions/workflows/lint-and-test.yml)
+
 ## Description
 `Get-ProjectCodeContent` is a PowerShell script that captures a code project's directory structure and file contents, then copies it to the clipboard.
 
