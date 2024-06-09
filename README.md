@@ -1,7 +1,16 @@
 # Get-ProjectCodeContent PowerShell Script
 
 ## Description
-Captures a code project's directory structure and file contents. Utilizes GitHub Actions for CI/CD, PSScriptAnalyzer for linting, and Pester for unit testing.
+`Get-ProjectCodeContent` is a PowerShell script that captures a code project's directory structure and file contents, then copies it to the clipboard.
+
+### Overview
+- Captures full directory structure recursively
+- Optionally exclude directories
+- Extracts file content
+- Formats the directory structure and file content
+- Copies the formatted content to the clipboard
+- Optionally output the content to the console
+- Optionally output verbose logging to the console
 
 ## References
 
