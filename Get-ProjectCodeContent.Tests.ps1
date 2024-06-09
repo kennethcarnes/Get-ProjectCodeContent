@@ -16,12 +16,12 @@ Describe "Get-ProjectCodeContent" {
 
         # Remove existing test directory structure if it exists
         if (Test-Path -Path $testRoot) {
-            Write-Host "Removing existing test directory structure at $testRoot"
+            Write-Verbose "Removing existing test directory structure at $testRoot"
             Remove-Item -Path $testRoot -Recurse -Force
         }
 
         # Create test directory structure
-        Write-Host "Creating test directory structure at $testRoot"
+        Write-Verbose "Creating test directory structure at $testRoot"
         New-Item -ItemType Directory -Path $testRoot -Force
         New-Item -ItemType Directory -Path "$testRoot\subfolder1" -Force
         New-Item -ItemType Directory -Path "$testRoot\subfolder2" -Force
@@ -39,14 +39,14 @@ Describe "Get-ProjectCodeContent" {
         if (-Not (Test-Path -Path $testRoot)) {
             Write-Error "Test directory was not created successfully."
         } else {
-            Write-Host "Test directory structure created successfully at $testRoot"
+            Write-Verbose "Test directory structure created successfully at $testRoot"
         }
     }
 
     AfterAll {
         # Remove the test directory structure after tests are complete
         if (Test-Path -Path $testRoot) {
-            Write-Host "Removing test directory structure at $testRoot"
+            Write-Verbose "Removing test directory structure at $testRoot"
             Remove-Item -Path $testRoot -Recurse -Force
         }
     }
@@ -59,7 +59,7 @@ Describe "Get-ProjectCodeContent" {
     # Test: Should exclude specified directories
     It "Should exclude specified directories" {
         $output = Get-ProjectCodeContent -RootDirectory $testRoot -ExcludeDirectories @(".github", "node_modules") -ReturnOutput
-        Write-Host "Output after exclusion test: $($output -join '`n')"
+        Write-Verbose "Output after exclusion test: $($output -join '`n')"
         $output | Should -Not -Contain "--- Contents of .github\file4.txt ---"
         $output | Should -Not -Contain "--- Contents of node_modules\file5.txt ---"
     }
@@ -67,14 +67,14 @@ Describe "Get-ProjectCodeContent" {
     # Test: Should include files in the root directory
     It "Should include files in the root directory" {
         $output = Get-ProjectCodeContent -RootDirectory $testRoot -ReturnOutput
-        Write-Host "Output after root directory test: $($output -join '`n')"
+        Write-Verbose "Output after root directory test: $($output -join '`n')"
         $output | Should -Contain "--- Contents of file1.txt ---"
     }
 
     # Test: Should include files in subdirectories
     It "Should include files in subdirectories" {
         $output = Get-ProjectCodeContent -RootDirectory $testRoot -ReturnOutput
-        Write-Host "Output after subdirectory test: $($output -join '`n')"
+        Write-Verbose "Output after subdirectory test: $($output -join '`n')"
         $output | Should -Contain "--- Contents of subfolder1\file2.txt ---"
         $output | Should -Contain "--- Contents of subfolder2\file3.txt ---"
     }
